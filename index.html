@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -80,20 +81,81 @@ nav{
 .back-link{display:inline-flex;align-items:center;gap:0.4em;font-size:var(--fs-sm);color:var(--muted);text-decoration:none;font-weight:500;margin-bottom:2rem;transition:color 0.2s;}
 .back-link:hover{color:var(--accent);}
 
+/* ── SCROLL PROGRESS BAR ── */
+#scroll-progress{
+  position:fixed;top:0;left:0;height:2px;width:0%;
+  background:var(--accent);z-index:999;
+  transition:width 0.1s linear;
+}
+
+/* ── REVEAL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-28px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(0.94);transition:opacity 0.5s ease,transform 0.5s ease;}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
 /* ── HERO ── */
 .hero-page{
   min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;
   padding:clamp(3rem,8vw,6rem) clamp(1.2rem,6vw,3.5rem);
   position:relative;overflow:hidden;
 }
+.hero-inner{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:clamp(2rem,5vw,5rem);
+  max-width:960px;
+}
+@media(max-width:640px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-avatar-wrap{display:none;}
+}
+/* animated dot-grid background */
+.hero-page::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle, rgba(224,92,42,0.07) 1px, transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;
+  animation:gridDrift 20s linear infinite;
+}
+@keyframes gridDrift{
+  0%{background-position:0 0;}
+  100%{background-position:32px 32px;}
+}
 .hero-page::before{
   content:'';position:absolute;top:-60px;right:-80px;
   width:clamp(220px,45vw,500px);height:clamp(220px,45vw,500px);
-  background:radial-gradient(circle,rgba(224,92,42,0.13) 0%,transparent 70%);
+  background:radial-gradient(circle,rgba(224,92,42,0.18) 0%,transparent 70%);
   pointer-events:none;
+  animation:pulse 6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.12);opacity:0.7;}
 }
 .hero-eyebrow{font-size:var(--fs-sm);color:var(--accent);font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;}
 .hero-name{font-family:'Playfair Display',serif;font-size:var(--fs-hero);font-weight:700;line-height:1.05;letter-spacing:-0.03em;color:var(--ink);margin-bottom:1.2rem;}
+.hero-avatar-wrap{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.hero-avatar{
+  width:clamp(160px,18vw,220px);height:clamp(160px,18vw,220px);
+  border-radius:50%;object-fit:cover;object-position:50% 20%;
+  border:3px solid var(--border);
+  box-shadow:0 8px 40px rgba(0,0,0,0.45);
+  display:block;
+  animation:avatarIn 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes avatarIn{from{opacity:0;transform:scale(0.7);}to{opacity:1;transform:scale(1);}}
+
+/* ── STAT COUNTERS ── */
+.hero-stats{display:flex;flex-wrap:wrap;gap:2rem;margin-top:2rem;margin-bottom:0;}
+.stat-item{display:flex;flex-direction:column;gap:0.1rem;}
+.stat-number{font-family:'Playfair Display',serif;font-size:var(--fs-2xl);font-weight:700;color:var(--ink);line-height:1;}
+.stat-label{font-size:var(--fs-xs);color:var(--muted);font-weight:500;letter-spacing:0.06em;}
 .hero-sub{font-size:var(--fs-md);color:var(--muted);font-weight:300;max-width:560px;margin-bottom:2.5rem;line-height:1.65;}
 .hero-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:2.5rem;}
 .tag{font-size:var(--fs-xs);font-weight:500;background:var(--accent-dim);color:var(--accent);border-radius:100px;padding:0.35em 1em;letter-spacing:0.03em;}
@@ -139,9 +201,16 @@ nav{
   background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
   padding:1.4rem 1.6rem;text-decoration:none;color:var(--ink);
   display:flex;flex-direction:column;gap:0.3rem;
-  transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;cursor:pointer;
+  transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s,background 0.25s;
+  cursor:pointer;position:relative;overflow:hidden;
 }
-.home-nav-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow);}
+.home-nav-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s ease;
+}
+.home-nav-card:hover::before{transform:scaleX(1);}
+.home-nav-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 32px rgba(224,92,42,0.12);}
 .home-nav-card-label{font-size:var(--fs-xs);color:var(--accent);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
 .home-nav-card-title{font-family:'Playfair Display',serif;font-size:var(--fs-lg);font-weight:600;}
 .home-nav-card-arrow{font-size:var(--fs-lg);color:var(--border);margin-top:auto;padding-top:0.5rem;transition:color 0.2s;}
@@ -198,9 +267,16 @@ nav{
 .project-card{
   background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
   padding:clamp(1.4rem,3vw,2rem);display:flex;flex-direction:column;gap:0.75rem;
-  transition:box-shadow 0.25s,transform 0.25s,border-color 0.25s;
+  transition:box-shadow 0.3s,transform 0.3s,border-color 0.3s;
+  position:relative;overflow:hidden;
 }
-.project-card:hover{box-shadow:var(--shadow);transform:translateY(-3px);border-color:var(--accent);}
+.project-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s ease;
+}
+.project-card:hover::before{transform:scaleX(1);}
+.project-card:hover{box-shadow:0 12px 48px rgba(224,92,42,0.15),var(--shadow);transform:translateY(-5px);border-color:var(--accent);}
 .project-card-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
 .project-year{font-size:var(--fs-xs);color:var(--accent);font-weight:600;letter-spacing:0.06em;}
 .project-logo{width:36px;height:36px;border-radius:6px;background:var(--logo-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
@@ -229,9 +305,16 @@ nav{
 .achievement-card{
   background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
   padding:1.3rem 1.5rem;display:flex;align-items:center;gap:1rem;
-  transition:border-color 0.2s,transform 0.2s;
+  transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s;
+  position:relative;overflow:hidden;
 }
-.achievement-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.achievement-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 0% 50%, rgba(224,92,42,0.06) 0%, transparent 60%);
+  opacity:0;transition:opacity 0.3s;pointer-events:none;
+}
+.achievement-card:hover::after{opacity:1;}
+.achievement-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 32px rgba(224,92,42,0.12);}
 .achievement-logo{width:44px;height:44px;border-radius:8px;background:var(--logo-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
 .achievement-logo img{width:32px;height:32px;object-fit:contain;}
 .achievement-logo svg{width:30px;height:30px;}
@@ -284,9 +367,9 @@ nav{
 .post-summary li{font-size:var(--fs-sm);color:var(--muted);line-height:1.65;}
 
 /* CONTACT */
-.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:2rem;margin-bottom:3rem;}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:2.5rem 3rem;margin-bottom:3rem;}
 .contact-item-label{font-size:var(--fs-xs);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;}
-.contact-item-value{font-size:var(--fs-md);}
+.contact-item-value{font-size:var(--fs-md);word-break:break-word;}
 .contact-item-value a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border);padding-bottom:1px;transition:border-color 0.2s,color 0.2s;}
 .contact-item-value a:hover{color:var(--accent);border-color:var(--accent);}
 
@@ -313,6 +396,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
 </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
 
 <nav>
   <div class="nav-left">
@@ -336,45 +420,32 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
 ═══════════════════════════════════════ -->
 <div class="page" id="page-home">
   <div class="hero-page">
-    <div class="hero-eyebrow">Business Analyst · Consultant · DTU '26</div>
-    <h1 class="hero-name">Pulkit Jindal</h1>
-    <p class="hero-sub">Final-year student at Delhi Technological University, currently interning at Bain&nbsp;&amp;&nbsp;Company. I turn messy data into clear strategy — through structured thinking, financial modeling, and sharp storytelling.</p>
-    <div class="hero-tags">
-      <span class="tag">Market Research</span>
-      <span class="tag">Financial Modeling</span>
-      <span class="tag">Data Storytelling</span>
-      <span class="tag">Excel · Python · Power BI · Tableau · Alteryx</span>
-      <span class="tag">AI Automation</span>
-    </div>
-    <div class="hero-ctas">
-      <button class="btn-primary" onclick="navigate('contact')">Get in touch →</button>
-      <a href="https://www.linkedin.com/in/pulkitjindal30/" target="_blank" class="btn-link">LinkedIn ↗</a>
-      <a href="https://github.com/Pul-kt" target="_blank" class="btn-link">GitHub ↗</a>
-    </div>
+      <div class="hero-left">
+        <div class="hero-eyebrow">Analyst @ Bain &amp; Company · DTU Alumni</div>
+        <h1 class="hero-name">Pulkit Jindal</h1>
+        <p class="hero-sub reveal">Analyst at Bain &amp; Company, graduated from Delhi Technological University. I help clients navigate complex business problems — through structured thinking, financial modeling, and executive-ready storytelling.</p>
+        <div class="hero-tags reveal">
+          <span class="tag">Market Research</span>
+          <span class="tag">Financial Modeling</span>
+          <span class="tag">Data Storytelling</span>
+          <span class="tag">Excel · Python · Power BI · Tableau · Alteryx</span>
+          <span class="tag">AI Automation</span>
+        </div>
+        <div class="hero-ctas reveal">
+          <button class="btn-primary" onclick="navigate('contact')">Get in touch →</button>
+          <a href="https://www.linkedin.com/in/pulkitjindal30/" target="_blank" class="btn-link">LinkedIn ↗</a>
+          <a href="https://github.com/Pul-kt" target="_blank" class="btn-link">GitHub ↗</a>
+        </div>
 
-    <div class="hero-logos">
+      </div>
+
+    <div class="hero-logos reveal">
       <span class="hero-logos-label">Currently &amp; previously at</span>
       <div class="hero-logos-row">
-        <div class="hero-logo-chip">
-          <img src="https://logo.clearbit.com/bain.com" alt="Bain" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><text y=\'22\' font-size=\'18\' fill=\'%23cc3333\'>B</text></svg>'">
-          Bain &amp; Company
-        </div>
-        <div class="hero-logo-chip">
-          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
-            <circle cx="16" cy="16" r="15" fill="#003580" stroke="#c8a84b" stroke-width="1.5"/>
-            <text x="16" y="13" text-anchor="middle" font-family="serif" font-size="7" font-weight="bold" fill="#c8a84b">DTU</text>
-            <text x="16" y="22" text-anchor="middle" font-family="serif" font-size="3.8" fill="#ffffff">DELHI TECH</text>
-          </svg>
-          DTU Delhi
-        </div>
-        <div class="hero-logo-chip">
-          <img src="https://logo.clearbit.com/mckinsey.org" alt="McKinsey" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><text y=\'22\' font-size=\'16\' fill=\'%230066cc\'>M</text></svg>'">
-          McKinsey.org Forward
-        </div>
-        <div class="hero-logo-chip">
-          <img src="https://logo.clearbit.com/internshala.com" alt="Internshala" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><rect width=\'32\' height=\'32\' rx=\'6\' fill=\'%2300bcd4\'/><text x=\'16\' y=\'22\' text-anchor=\'middle\' font-size=\'16\' fill=\'white\'>I</text></svg>'">
-          Internshala Ambassador
-        </div>
+        <div class="hero-logo-chip">Bain &amp; Company</div>
+        <div class="hero-logo-chip">DTU Delhi</div>
+        <div class="hero-logo-chip">McKinsey.org Forward</div>
+        <div class="hero-logo-chip">Internshala Ambassador</div>
       </div>
     </div>
 
@@ -420,12 +491,8 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
       <div class="exp-list">
 
         <!-- Bain -->
-        <div class="exp-item">
+        <div class="exp-item reveal">
           <div class="exp-left">
-            <div class="logo-box-lg">
-              <img src="https://logo.clearbit.com/bain.com" alt="Bain & Company"
-                onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 44 44\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'44\' height=\'44\' rx=\'6\' fill=\'%23cc0000\'/><text x=\'22\' y=\'30\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'22\' font-weight=\'bold\' fill=\'white\'>B</text></svg>'">
-            </div>
             <span class="exp-period">Jan 2026 – Present</span>
           </div>
           <div>
@@ -440,7 +507,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
             <!-- ReviewScope -->
             <div class="exp-sub-project">
               <div class="exp-sub-title">ReviewScope — Multi-Brand Sentiment Intelligence Platform</div>
-              <div class="exp-sub-role">Case Work</div>
+              <div class="exp-sub-role">IP · Bain &amp; Company</div>
               <ul class="exp-bullets">
                 <li>Built automated location discovery and scraping pipeline — collected 10,000+ Google reviews across 200+ outlets covering 1 target brand &amp; 6 competitors</li>
                 <li>Integrated Claude AI for location deduplication, data normalization, and theme bucket analysis</li>
@@ -462,7 +529,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
             <!-- Shelf Placement -->
             <div class="exp-sub-project">
               <div class="exp-sub-title">Shelf Placement Impact Analysis — Retail Execution Analytics</div>
-              <div class="exp-sub-role">Case Work</div>
+              <div class="exp-sub-role">IP · Bain &amp; Company</div>
               <ul class="exp-bullets">
                 <li>Built computer vision pipeline to process store visit photographs and detect target &amp; competitor product placements</li>
                 <li>Developed regression model analyzing shelf height, category bundling, and brand label visibility on sales velocity</li>
@@ -479,14 +546,8 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
 
         <!-- Fintegic -->
-        <div class="exp-item">
+        <div class="exp-item reveal">
           <div class="exp-left">
-            <div class="logo-box-lg">
-              <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-                <rect width="44" height="44" rx="8" fill="#1e3a5f"/>
-                <text x="22" y="30" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#4db8ff">F</text>
-              </svg>
-            </div>
             <span class="exp-period">May – Jul 2025</span>
           </div>
           <div>
@@ -500,14 +561,8 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
 
         <!-- Ambey -->
-        <div class="exp-item">
+        <div class="exp-item reveal">
           <div class="exp-left">
-            <div class="logo-box-lg">
-              <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-                <rect width="44" height="44" rx="8" fill="#1a4a1a"/>
-                <text x="22" y="30" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#66cc66">A</text>
-              </svg>
-            </div>
             <span class="exp-period">May – Aug 2024</span>
           </div>
           <div>
@@ -537,15 +592,9 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
       <div class="projects-grid">
 
         <!-- ReviewScope -->
-        <div class="project-card">
+        <div class="project-card reveal-scale">
           <div class="project-card-header">
             <div class="project-year">2026 · Bain &amp; Co</div>
-            <div class="project-logo">
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="4" fill="#cc0000"/>
-                <text x="16" y="22" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">R</text>
-              </svg>
-            </div>
           </div>
           <div class="project-name">ReviewScope</div>
           <div class="project-desc">Multi-brand sentiment intelligence platform scraping 10,000+ Google reviews across 200+ outlets for competitive analysis.</div>
@@ -565,15 +614,9 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
 
         <!-- Shelf Placement -->
-        <div class="project-card">
+        <div class="project-card reveal-scale">
           <div class="project-card-header">
             <div class="project-year">2026 · Bain &amp; Co</div>
-            <div class="project-logo">
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="4" fill="#1e3a5f"/>
-                <text x="16" y="22" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#4db8ff">CV</text>
-              </svg>
-            </div>
           </div>
           <div class="project-name">Shelf Placement Impact Analysis</div>
           <div class="project-desc">Retail execution analytics tool using computer vision to detect shelf placements and model sales velocity impact.</div>
@@ -592,15 +635,9 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
 
         <!-- Coffee Shop -->
-        <div class="project-card">
+        <div class="project-card reveal-scale">
           <div class="project-card-header">
             <div class="project-year">January 2025</div>
-            <div class="project-logo">
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="4" fill="#217346"/>
-                <text x="16" y="22" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">X</text>
-              </svg>
-            </div>
           </div>
           <div class="project-name">Coffee Shop Analytics Dashboard</div>
           <div class="project-desc">Interactive Excel dashboard tracking $698K in sales, 149K footfall, and trend-based KPIs across multiple locations.</div>
@@ -619,17 +656,9 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
 
         <!-- Bank Loan -->
-        <div class="project-card">
+        <div class="project-card reveal-scale">
           <div class="project-card-header">
             <div class="project-year">April 2024</div>
-            <div class="project-logo">
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="4" fill="#f2c811"/>
-                <rect x="7" y="18" width="4" height="8" rx="1" fill="#1a1a1a"/>
-                <rect x="14" y="12" width="4" height="14" rx="1" fill="#1a1a1a"/>
-                <rect x="21" y="7" width="4" height="19" rx="1" fill="#1a1a1a"/>
-              </svg>
-            </div>
           </div>
           <div class="project-name">Bank Loan Analysis &amp; Prediction</div>
           <div class="project-desc">End-to-end ML pipeline for bank loan approval prediction paired with interactive Power BI dashboards.</div>
@@ -648,15 +677,9 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
 
         <!-- Ambey KPI -->
-        <div class="project-card">
+        <div class="project-card reveal-scale">
           <div class="project-card-header">
             <div class="project-year">2024</div>
-            <div class="project-logo">
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="4" fill="#1a4a1a"/>
-                <text x="16" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="bold" fill="#66cc66">A</text>
-              </svg>
-            </div>
           </div>
           <div class="project-name">Ambey Polymers KPI Dashboard</div>
           <div class="project-desc">Real-time executive dashboard built during internship to monitor KPIs across 15+ microservices.</div>
@@ -689,12 +712,12 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
       <div class="about-grid">
         <div class="about-bio">
           <p>I'm a business analyst who enjoys finding <strong>the one number that changes the room</strong>. I care about clear thinking, good frameworks, and outcomes that actually matter.</p>
-          <p>DTU student, Bain analyst, and occasional data nerd. Selected for the <strong>McKinsey.org Forward 2025</strong> program and formerly a Google Code-in open source contributor.</p>
+          <p>Analyst at Bain &amp; Company and graduate of DTU. Selected for the <strong>McKinsey.org Forward 2025</strong> program and formerly a Google Code-in open source contributor.</p>
           <p>Beyond analytics, I've led the Mentorlink program at STEP DTU — supporting 150+ students with 29 mentors — and coordinate campus placements for 2000+ students across 130+ organizations.</p>
         </div>
         <div class="about-facts">
           <div class="fact-row"><div class="fact-label">Currently</div><div class="fact-value">Analyst @ Bain &amp; Company</div></div>
-          <div class="fact-row"><div class="fact-label">Education</div><div class="fact-value">B.Tech @ DTU · GPA 7.5 · Graduating 2026</div></div>
+          <div class="fact-row"><div class="fact-label">Education</div><div class="fact-value">B.Tech, DTU (2022–2026) · GPA 7.5</div></div>
           <div class="fact-row"><div class="fact-label">Location</div><div class="fact-value">Delhi, India</div></div>
           <div class="fact-row"><div class="fact-label">Strengths</div><div class="fact-value">Market Research · Financial Modeling · Data Storytelling · Strategic Planning</div></div>
           <div class="fact-row"><div class="fact-label">Tools</div><div class="fact-value">Excel · PowerPoint · Python · Tableau · Power BI · Mekko Charts · SQL · OpenCV</div></div>
@@ -709,10 +732,6 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         <div class="achievements-grid">
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <img src="https://logo.clearbit.com/mckinsey.com" alt="McKinsey"
-                onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 32 32\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'32\' height=\'32\' rx=\'6\' fill=\'%230057a8\'/><text x=\'16\' y=\'22\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'16\' font-weight=\'bold\' fill=\'white\'>M</text></svg>'">
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">McKinsey.org Forward</div>
               <div class="achievement-sub">2025 · International Leadership Program</div>
@@ -720,25 +739,13 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           </div>
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="16" fill="#003580"/>
-                <circle cx="16" cy="16" r="13" fill="none" stroke="#c8a84b" stroke-width="1"/>
-                <text x="16" y="13" text-anchor="middle" font-family="serif" font-size="6.5" font-weight="bold" fill="#c8a84b">DTU</text>
-                <text x="16" y="21" text-anchor="middle" font-family="sans-serif" font-size="3.2" fill="#ffffff" letter-spacing="0.3">DELHI TECH UNIV</text>
-              </svg>
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">B.Tech — DTU</div>
-              <div class="achievement-sub">2022–2026 · GPA 7.5 · Graduating</div>
+              <div class="achievement-sub">2022–2026 · GPA 7.5 · Conferred</div>
             </div>
           </div>
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <img src="https://logo.clearbit.com/google.com" alt="Google"
-                onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 32 32\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'32\' height=\'32\' rx=\'6\' fill=\'%234285f4\'/><text x=\'16\' y=\'22\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'16\' font-weight=\'bold\' fill=\'white\'>G</text></svg>'">
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">Google Code-in</div>
               <div class="achievement-sub">Open Source Contributor</div>
@@ -746,10 +753,6 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           </div>
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <img src="https://logo.clearbit.com/bain.com" alt="Bain"
-                onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 32 32\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'32\' height=\'32\' rx=\'6\' fill=\'%23cc0000\'/><text x=\'16\' y=\'22\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'16\' font-weight=\'bold\' fill=\'white\'>B</text></svg>'">
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">Bain &amp; Company</div>
               <div class="achievement-sub">Analyst · Jan 2026 – Present</div>
@@ -757,10 +760,6 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           </div>
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <img src="https://logo.clearbit.com/internshala.com" alt="Internshala"
-                onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 32 32\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'32\' height=\'32\' rx=\'6\' fill=\'%2300bcd4\'/><text x=\'16\' y=\'22\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\' fill=\'white\'>I</text></svg>'">
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">Campus Ambassador</div>
               <div class="achievement-sub">Internshala · iQOO</div>
@@ -768,12 +767,6 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           </div>
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="6" fill="#5c35a0"/>
-                <text x="16" y="21" text-anchor="middle" font-family="Arial" font-size="16">🎓</text>
-              </svg>
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">Mentor Head</div>
               <div class="achievement-sub">STEP DTU · 150+ students · 95% satisfaction</div>
@@ -781,13 +774,6 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           </div>
 
           <div class="achievement-card">
-            <div class="achievement-logo">
-              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="16" fill="#003580"/>
-                <text x="16" y="13" text-anchor="middle" font-family="serif" font-size="6.5" font-weight="bold" fill="#c8a84b">DTU</text>
-                <text x="16" y="22" text-anchor="middle" font-family="sans-serif" font-size="3.2" fill="#ffffff">PLACEMENT</text>
-              </svg>
-            </div>
             <div class="achievement-info">
               <div class="achievement-name">Placement Coordinator</div>
               <div class="achievement-sub">DTU · 2000+ students · 130+ orgs</div>
@@ -810,13 +796,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year">2026</div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <img src="https://logo.clearbit.com/bain.com" alt="Bain"
-                  onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'24\' height=\'24\' rx=\'4\' fill=\'%23cc0000\'/><text x=\'12\' y=\'17\' text-anchor=\'middle\' font-size=\'12\' font-weight=\'bold\' fill=\'white\'>B</text></svg>'">
-              </div>
-              <div class="timeline-title">Bain &amp; Company</div>
-            </div>
+            <div class="timeline-title">Bain &amp; Company</div>
             <div class="timeline-desc">Joined as Analyst in January. Built ReviewScope (10K+ reviews, AI-powered), Shelf Placement computer vision tool, and Mekko-chart-driven competitive intelligence deliverables for C-suite clients.</div>
           </div>
         </div>
@@ -825,15 +805,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year"></div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="12" fill="#003580"/>
-                  <text x="12" y="16" text-anchor="middle" font-family="serif" font-size="7" font-weight="bold" fill="#c8a84b">DTU</text>
-                </svg>
-              </div>
-              <div class="timeline-title">Placement Coordinator</div>
-            </div>
+            <div class="timeline-title">Placement Coordinator</div>
             <div class="timeline-desc">Managing campus recruitment for the 2026 batch at DTU — coordinating between 2000+ students and 130+ recruiting organizations.</div>
           </div>
         </div>
@@ -842,13 +814,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year">2025</div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <img src="https://logo.clearbit.com/mckinsey.com" alt="McKinsey"
-                  onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'24\' height=\'24\' rx=\'4\' fill=\'%230057a8\'/><text x=\'12\' y=\'17\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'bold\' fill=\'white\'>M</text></svg>'">
-              </div>
-              <div class="timeline-title">McKinsey.org Forward</div>
-            </div>
+            <div class="timeline-title">McKinsey.org Forward</div>
             <div class="timeline-desc">Selected for the international leadership and professional development program. Strengthened strategic thinking and communication skills.</div>
           </div>
         </div>
@@ -857,15 +823,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year"></div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="24" height="24" rx="4" fill="#1e3a5f"/>
-                  <text x="12" y="17" text-anchor="middle" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#4db8ff">F</text>
-                </svg>
-              </div>
-              <div class="timeline-title">Fintegic Consulting</div>
-            </div>
+            <div class="timeline-title">Fintegic Consulting</div>
             <div class="timeline-desc">Interned as an Analyst — worked on process analysis, data interpretation, and operational workflow improvements for client projects.</div>
           </div>
         </div>
@@ -874,15 +832,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year"></div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="24" height="24" rx="4" fill="#5c35a0"/>
-                  <text x="12" y="17" text-anchor="middle" font-size="13">🎓</text>
-                </svg>
-              </div>
-              <div class="timeline-title">Mentor Head @ STEP DTU</div>
-            </div>
+            <div class="timeline-title">Mentor Head @ STEP DTU</div>
             <div class="timeline-desc">Led the Mentorlink program (Aug 2024 – Aug 2025) with 29 mentors supporting 150+ students. 95% satisfaction rating. Ran skill-development workshops for 200+ students.</div>
           </div>
         </div>
@@ -891,15 +841,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year">2024</div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="24" height="24" rx="4" fill="#1a4a1a"/>
-                  <text x="12" y="17" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#66cc66">A</text>
-                </svg>
-              </div>
-              <div class="timeline-title">Ambey Polymers</div>
-            </div>
+            <div class="timeline-title">Ambey Polymers</div>
             <div class="timeline-desc">First internship as a Business Analyst. Analyzed 10K+ daily transactions, cut turnaround time by 35%, built real-time KPI dashboards across 15+ microservices.</div>
           </div>
         </div>
@@ -908,17 +850,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year"></div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="24" height="24" rx="4" fill="#f2c811"/>
-                  <rect x="5" y="14" width="3" height="6" rx="1" fill="#1a1a1a"/>
-                  <rect x="10" y="10" width="3" height="10" rx="1" fill="#1a1a1a"/>
-                  <rect x="15" y="6" width="3" height="14" rx="1" fill="#1a1a1a"/>
-                </svg>
-              </div>
-              <div class="timeline-title">Bank Loan ML Project</div>
-            </div>
+            <div class="timeline-title">Bank Loan ML Project</div>
             <div class="timeline-desc">Built a Random Forest classifier at 97% accuracy for loan default prediction, paired with interactive Power BI dashboards for credit risk insights.</div>
           </div>
         </div>
@@ -927,13 +859,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
           <div class="timeline-year"></div>
           <div class="timeline-dot"></div>
           <div class="timeline-content">
-            <div class="timeline-header">
-              <div class="timeline-logo">
-                <img src="https://logo.clearbit.com/internshala.com" alt="Internshala"
-                  onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'24\' height=\'24\' rx=\'4\' fill=\'%2300bcd4\'/><text x=\'12\' y=\'17\' text-anchor=\'middle\' font-size=\'12\' font-weight=\'bold\' fill=\'white\'>I</text></svg>'">
-              </div>
-              <div class="timeline-title">Campus Ambassador</div>
-            </div>
+            <div class="timeline-title">Campus Ambassador</div>
             <div class="timeline-desc">Represented Internshala and iQOO on campus — built communities and led outreach programs.</div>
           </div>
         </div>
@@ -956,8 +882,8 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         <div class="blog-item" onclick="navigate('blog/bain')">
           <div>
             <div class="blog-meta"><span class="blog-category">Consulting · Interviews · Career</span><span class="blog-date">2026</span></div>
-            <div class="blog-title">How to Prepare for Bain Interviews</div>
-            <div class="blog-desc">A complete breakdown of what Bain looks for — structuring cases, driving insights, and how to think like a consultant from day one.</div>
+            <div class="blog-title">How to Get into Bain — Tips from the Inside</div>
+            <div class="blog-desc">What Bain actually looks for, written by someone now on the other side of the table. Case structure, guesstimate approach, and what truly differentiates candidates.</div>
           </div>
           <div class="blog-arrow">→</div>
         </div>
@@ -991,19 +917,17 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
       <a class="back-link" href="#blog" onclick="navigate('blog');return false;">← Back to Blog</a>
       <div class="post-header">
         <span class="blog-category">Consulting · Interviews · Career · 2026</span>
-        <h1 class="post-title">How to Prepare for Bain Interviews</h1>
+        <h1 class="post-title">How to Get into Bain — Tips from the Inside</h1>
       </div>
       <div class="post-body">
-        <p>Preparing for Bain interviews is a multifaceted process, combining company understanding, problem-solving, and strong personal presentation. Bain typically has two rounds that integrate guesstimates, case studies, and resume grilling.</p>
+        <p>I now work at Bain &amp; Company. Before I joined, I went through the exact process you're preparing for — and having sat on both sides, I can tell you that the things that actually differentiate candidates are simpler, and harder, than most prep guides suggest.</p>
         <p>First, knowing Bain's culture is vital. Bain assigns you to a <strong>Center of Excellence (COE)</strong>, so research the COE you're applying for. Whether it's Private Equity, TMT, or another, understanding its role will make you more relevant in the interview.</p>
         <p>Second, your resume is constantly on the table. Bain looks for <strong>leadership</strong> — positions of responsibility that reflect communication and people skills. Be ready to discuss your roles, what you did, and how you led.</p>
         <p>In the first round, you'll start with an introduction — your background, hobbies, and why you want Bain. Then comes a guesstimate. Validate your approach with the interviewer to ensure alignment before diving deep.</p>
         <p>In the second round, you'll face a case study. Solve the business problem logically, and then expect deeper questions about your resume. Be prepared to explain your projects, tools like Power BI or Tableau, and what you achieved.</p>
         <p>Finally, be authentic about why you want Bain. Whether it's the people or the culture, your answer should be personal. Stay updated on openings and network with seniors or on LinkedIn.</p>
         <div class="post-summary">
-          <div class="post-summary-title">Summary Tips</div>
-          <ol>
-            <li>Research your COE and Bain's culture — know where you're applying.</li>
+          <div class="post-summary-title">What Actually Differentiates Candidates</div>
             <li>Prepare to discuss leadership experiences — Bain values these.</li>
             <li>Validate guesstimates — ask the interviewer if you're on track.</li>
             <li>Be ready to explain your projects and tools in detail.</li>
@@ -1080,7 +1004,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
     <div class="container">
       <a class="back-link" href="#" onclick="navigate('home');return false;">← Home</a>
       <p class="section-label">Let's talk</p>
-      <h2 class="section-title">Open to internships, collaborations,<br>or just a good conversation.</h2>
+      <h2 class="section-title">Open to collaborations, advisory,<br>or just a good conversation.</h2>
       <div class="contact-grid">
         <div>
           <div class="contact-item-label">Email</div>
@@ -1100,7 +1024,7 @@ footer{text-align:center;font-size:var(--fs-xs);color:var(--muted);padding:1.5re
         </div>
         <div>
           <div class="contact-item-label">Portfolio</div>
-          <div class="contact-item-value"><a href="https://pulkit-jindal.vercel.app" target="_blank">pulkit-jindal.vercel.app ↗</a></div>
+          <div class="contact-item-value"><a href="https://jindalpulkit30.vercel.app/" target="_blank">jindalpulkit30.vercel.app ↗</a></div>
         </div>
       </div>
     </div>
@@ -1139,6 +1063,9 @@ function showPage(page) {
     contact:'Contact — Pulkit Jindal',
   };
   document.title = titles[page] || 'Pulkit Jindal';
+
+  // trigger reveal + counters after page switch
+  setTimeout(() => { initReveal(); initCounters(); }, 50);
 }
 
 function getPageFromHash() {
@@ -1155,6 +1082,61 @@ function toggleTheme() {
   document.getElementById('toggle-icon').textContent = isDark ? '🌙' : '☀️';
   document.getElementById('toggle-label').textContent = isDark ? 'Dark' : 'Light';
 }
+
+/* ── SCROLL PROGRESS ── */
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+});
+
+/* ── REVEAL ON SCROLL ── */
+function initReveal() {
+  const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-scale');
+  if (!els.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(el => io.observe(el));
+}
+
+/* ── COUNTER ANIMATION ── */
+function initCounters() {
+  const counters = document.querySelectorAll('.stat-number');
+  if (!counters.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const duration = 1400;
+      const start = performance.now();
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const val = Math.floor(eased * target);
+        el.textContent = (val >= 1000 ? (val/1000).toFixed(val%1000===0?0:1)+'K' : val) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = (target >= 1000 ? (target/1000).toFixed(0)+'K' : target) + suffix;
+      }
+      requestAnimationFrame(step);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => io.observe(c));
+}
+
+/* ── TYPING EFFECT removed ── */
+
+/* ── INIT ON LOAD ── */
+setTimeout(() => { initReveal(); initCounters(); }, 100);
 </script>
 </body>
 </html>
